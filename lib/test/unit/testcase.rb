@@ -66,6 +66,33 @@ module Test
         end
         return suite
       end
+      
+      # Invoca Patch for Fixture Realm
+      def self.using_fixture fixture
+        @fixture_realm = fixture
+      end
+
+      def self.current_using_fixture
+        @fixture_realm
+      end
+
+      def self.method_fixture method_name
+        fixtures_by_method[method_name.to_s] || :default
+      end
+
+      def self.fixtures_by_method
+        @@fixtures_by_method ||= {}
+      end
+
+      def self.method_added method_name
+        super
+        fixtures_by_method[method_name.to_s] = @fixture_realm
+      end
+
+      def fixture_realm
+        self.class.method_fixture method_name
+      end
+      # End Invoca Patch
 
       # Runs the individual test method represented by this
       # instance of the fixture, collecting statistics, failures
